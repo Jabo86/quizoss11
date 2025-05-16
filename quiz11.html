@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 40</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 40</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (1171-1200) con opzioni disposte casualmente
+        const questions = [
+            {
+                question: "Cos’è la demenza senile?",
+                options: ["Un’infezione cerebrale", "Un declino cognitivo legato all’età", "Un accumulo di liquido nel cervello"],
+                correct: "Un declino cognitivo legato all’età",
+                explanation: "La demenza senile è un declino cognitivo legato all’età, che causa perdita di memoria, disorientamento e difficoltà nelle attività quotidiane. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare il comportamento, garantire la sicurezza, assistere nelle attività quotidiane e segnalare segni come agitazione o cadute."
+            },
+            {
+                question: "Quale è un segno tipico della demenza senile?",
+                options: ["Ittero", "Perdita di memoria recente", "Poliuria"],
+                correct: "Perdita di memoria recente",
+                explanation: "La perdita di memoria recente, spesso accompagnata da disorientamento, è un segno tipico della demenza senile, soprattutto nelle fasi iniziali. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i deficit cognitivi, garantire routine strutturate, monitorare il comportamento e segnalare all’infermiere sintomi come aggressività o incontinenza."
+            },
+            {
+                question: "Cos’è la sindrome da immobilizzazione?",
+                options: ["Un accumulo di liquido nei polmoni", "Una complicanza da allettamento prolungato", "Un’infezione muscolare"],
+                correct: "Una complicanza da allettamento prolungato",
+                explanation: "La sindrome da immobilizzazione è una complicanza da allettamento prolungato, che causa piaghe da decubito, atrofia muscolare e rischio di trombosi. Non è un’infezione né un accumulo di liquido. Gli OSS devono mobilizzare il paziente, garantire l’igiene, monitorare la cute e segnalare segni come arrossamenti o febbre."
+            },
+            {
+                question: "Quale è un segno tipico della sindrome da immobilizzazione?",
+                options: ["Poliuria", "Piaghe da decubito", "Ittero"],
+                correct: "Piaghe da decubito",
+                explanation: "Le piaghe da decubito, spesso su prominenze ossee, sono un segno tipico della sindrome da immobilizzazione, dovute alla pressione prolungata. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la cute, garantire cambi posturali, monitorare le lesioni e segnalare all’infermiere sintomi come infezioni o ulcerazioni."
+            },
+            {
+                question: "Cos’è la malnutrizione nell’anziano?",
+                options: ["Un’infezione digestiva", "Una carenza di nutrienti essenziali", "Un accumulo di liquido nell’intestino"],
+                correct: "Una carenza di nutrienti essenziali",
+                explanation: "La malnutrizione nell’anziano è una carenza di nutrienti essenziali, che causa perdita di peso, debolezza e rischio di infezioni. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare l’alimentazione, garantire una dieta bilanciata, assistere nei pasti e segnalare segni come stanchezza o ulcere."
+            },
+            {
+                question: "Quale è un segno tipico della malnutrizione nell’anziano?",
+                options: ["Ittero", "Perdita di peso involontaria", "Oliguria"],
+                correct: "Perdita di peso involontaria",
+                explanation: "La perdita di peso involontaria, spesso accompagnata da debolezza, è un segno tipico della malnutrizione nell’anziano, dovuta a carenze nutrizionali. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare il peso, monitorare l’appetito, garantire il comfort e segnalare all’infermiere sintomi come apatia o infezioni."
+            },
+            {
+                question: "Cos’è la sarcopenia?",
+                options: ["Un accumulo di liquido nei muscoli", "Una perdita di massa muscolare legata all’età", "Un’infezione muscolare"],
+                correct: "Una perdita di massa muscolare legata all’età",
+                explanation: "La sarcopenia è una perdita di massa muscolare legata all’età, che causa debolezza, cadute e ridotta mobilità. Non è un’infezione né un accumulo di liquido. Gli OSS devono assistere nella mobilizzazione, promuovere esercizi leggeri, garantire la sicurezza e segnalare segni come difficoltà motorie o cadute."
+            },
+            {
+                question: "Quale è un segno tipico della sarcopenia?",
+                options: ["Poliuria", "Debolezza muscolare", "Ittero"],
+                correct: "Debolezza muscolare",
+                explanation: "La debolezza muscolare, spesso accompagnata da difficoltà nei movimenti, è un segno tipico della sarcopenia, dovuta alla perdita di massa muscolare. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la forza, garantire ausili per la deambulazione, monitorare la mobilità e segnalare all’infermiere sintomi come cadute o stanchezza."
+            },
+            {
+                question: "Cos’è la prevenzione delle cadute nell’anziano?",
+                options: ["Un’infezione muscolare", "Un insieme di misure per ridurre il rischio di cadute", "Un accumulo di liquido nelle articolazioni"],
+                correct: "Un insieme di misure per ridurre il rischio di cadute",
+                explanation: "La prevenzione delle cadute nell’anziano è un insieme di misure per ridurre il rischio di cadute, come rimuovere ostacoli, fornire ausili e monitorare la mobilità. Non è un’infezione né un accumulo di liquido. Gli OSS devono garantire un ambiente sicuro, assistere nella deambulazione, monitorare il paziente e segnalare segni come instabilità o cadute."
+            },
+            {
+                question: "Quale è una misura tipica per la prevenzione delle cadute?",
+                options: ["Ittero", "Illuminazione adeguata", "Oliguria"],
+                correct: "Illuminazione adeguata",
+                explanation: "L’illuminazione adeguata, per evitare ostacoli, è una misura tipica per la prevenzione delle cadute nell’anziano. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono controllare l’ambiente, garantire ausili, monitorare la sicurezza e segnalare all’infermiere sintomi come vertigini o instabilità."
+            },
+            {
+                question: "Cos’è l’igiene orale nell’anziano?",
+                options: ["Un accumulo di liquido in bocca", "Una procedura per mantenere la bocca pulita", "Un’infezione dentale"],
+                correct: "Una procedura per mantenere la bocca pulita",
+                explanation: "L’igiene orale nell’anziano è una procedura per mantenere la bocca pulita, essenziale per prevenire infezioni e migliorare il comfort. Non è un’infezione né un accumulo di liquido. Gli OSS devono eseguire l’igiene orale, garantire l’uso di spazzolini adeguati, monitorare la mucosa orale e segnalare segni come ulcerazioni o sanguinamenti."
+            },
+            {
+                question: "Quale è una precauzione per l’igiene orale nell’anziano?",
+                options: ["Poliuria", "Uso di un dentifricio non abrasivo", "Ittero"],
+                correct: "Uso di un dentifricio non abrasivo",
+                explanation: "L’uso di un dentifricio non abrasivo è una precauzione per l’igiene orale nell’anziano, per proteggere le mucose e i denti. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono garantire una pulizia delicata, monitorare la bocca, garantire il comfort e segnalare all’infermiere sintomi come stomatite o dolore."
+            },
+            {
+                question: "Cos’è la gestione delle stomie nell’anziano?",
+                options: ["Un’infezione intestinale", "Una procedura per curare le stomie", "Un accumulo di liquido nell’intestino"],
+                correct: "Una procedura per curare le stomie",
+                explanation: "La gestione delle stomie nell’anziano è una procedura per curare le stomie (es. colostomia, ileostomia), garantendo igiene e funzionalità. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare la stomia, garantire l’igiene, assistere nella sostituzione della sacca e segnalare segni come infezioni o irritazioni cutanee."
+            },
+            {
+                question: "Quale è una complicanza tipica della gestione delle stomie?",
+                options: ["Ittero", "Irritazione cutanea peristomale", "Poliuria"],
+                correct: "Irritazione cutanea peristomale",
+                explanation: "L’irritazione cutanea peristomale, spesso dovuta a perdite o cattiva igiene, è una complicanza tipica della gestione delle stomie. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la cute, garantire l’igiene, monitorare la stomia e segnalare all’infermiere sintomi come arrossamenti o infezioni."
+            },
+            {
+                question: "Cos’è la mobilizzazione passiva nell’anziano?",
+                options: ["Un accumulo di liquido nelle articolazioni", "Un movimento guidato delle articolazioni", "Un’infezione muscolare"],
+                correct: "Un movimento guidato delle articolazioni",
+                explanation: "La mobilizzazione passiva nell’anziano è un movimento guidato delle articolazioni, usato per prevenire rigidità e piaghe da decubito. Non è un’infezione né un accumulo di liquido. Gli OSS devono eseguire la mobilizzazione con cura, garantire il comfort, monitorare la cute e segnalare segni come dolore o arrossamenti."
+            },
+            {
+                question: "Quale è un beneficio tipico della mobilizzazione passiva?",
+                options: ["Poliuria", "Prevenzione della rigidità articolare", "Ittero"],
+                correct: "Prevenzione della rigidità articolare",
+                explanation: "La prevenzione della rigidità articolare è un beneficio tipico della mobilizzazione passiva, che mantiene la funzionalità articolare. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono eseguire i movimenti lentamente, monitorare il paziente, garantire il comfort e segnalare all’infermiere sintomi come dolore o spasmi."
+            },
+            {
+                question: "Cos’è la prevenzione delle piaghe da decubito?",
+                options: ["Un’infezione cutanea", "Un insieme di misure per evitare lesioni da pressione", "Un accumulo di liquido nella cute"],
+                correct: "Un insieme di misure per evitare lesioni da pressione",
+                explanation: "La prevenzione delle piaghe da decubito è un insieme di misure per evitare lesioni da pressione, come cambi posturali e uso di materassi antidecubito. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare la cute, garantire cambi posturali, assistere nella gestione e segnalare segni come arrossamenti o lesioni."
+            },
+            {
+                question: "Quale è una misura tipica per prevenire le piaghe da decubito?",
+                options: ["Ittero", "Cambi posturali regolari", "Oliguria"],
+                correct: "Cambi posturali regolari",
+                explanation: "I cambi posturali regolari, ogni 2-3 ore, sono una misura tipica per prevenire le piaghe da decubito, riducendo la pressione sulle aree vulnerabili. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la cute, garantire l’igiene, monitorare le lesioni e segnalare all’infermiere sintomi come ulcerazioni o infezioni."
+            },
+            {
+                question: "Cos’è l’assistenza nella deambulazione dell’anziano?",
+                options: ["Un accumulo di liquido nelle gambe", "Un supporto per favorire il movimento sicuro", "Un’infezione muscolare"],
+                correct: "Un supporto per favorire il movimento sicuro",
+                explanation: "L’assistenza nella deambulazione dell’anziano è un supporto per favorire il movimento sicuro, usando ausili come bastoni o deambulatori. Non è un’infezione né un accumulo di liquido. Gli OSS devono garantire la sicurezza, monitorare la stabilità, assistere nel movimento e segnalare segni come cadute o debolezza."
+            },
+            {
+                question: "Quale è una precauzione per l’assistenza nella deambulazione?",
+                options: ["Poliuria", "Uso di calzature antiscivolo", "Ittero"],
+                correct: "Uso di calzature antiscivolo",
+                explanation: "L’uso di calzature antiscivolo è una precauzione per l’assistenza nella deambulazione, per prevenire cadute. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono controllare gli ausili, garantire la sicurezza, monitorare la deambulazione e segnalare all’infermiere sintomi come instabilità o dolore."
+            },
+            {
+                question: "Cos’è la gestione del dolore nell’anziano?",
+                options: ["Un’infezione muscolare", "Un insieme di interventi per alleviare il dolore", "Un accumulo di liquido nelle articolazioni"],
+                correct: "Un insieme di interventi per alleviare il dolore",
+                explanation: "La gestione del dolore nell’anziano è un insieme di interventi per alleviare il dolore, come farmaci, tecniche non farmacologiche e comfort. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare il dolore, garantire il comfort, assistere nella somministrazione di farmaci e segnalare segni come peggioramento o effetti collaterali."
+            },
+            {
+                question: "Quale è una tecnica non farmacologica per la gestione del dolore?",
+                options: ["Ittero", "Massaggio leggero", "Oliguria"],
+                correct: "Massaggio leggero",
+                explanation: "Il massaggio leggero è una tecnica non farmacologica per la gestione del dolore, che promuove rilassamento e comfort. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono eseguire il massaggio con cura, monitorare il paziente, garantire il comfort e segnalare all’infermiere sintomi come dolore persistente o arrossamenti."
+            },
+            {
+                question: "Cos’è l’assistenza nell’alimentazione dell’anziano?",
+                options: ["Un accumulo di liquido nell’intestino", "Un supporto per garantire un’adeguata nutrizione", "Un’infezione digestiva"],
+                correct: "Un supporto per garantire un’adeguata nutrizione",
+                explanation: "L’assistenza nell’alimentazione dell’anziano è un supporto per garantire un’adeguata nutrizione, come aiutare nei pasti o adattare la consistenza degli alimenti. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare l’appetito, garantire l’igiene, assistere nei pasti e segnalare segni come difficoltà di deglutizione o rifiuto del cibo."
+            },
+            {
+                question: "Quale è una precauzione per l’assistenza nell’alimentazione?",
+                options: ["Poliuria", "Posizione seduta durante i pasti", "Ittero"],
+                correct: "Posizione seduta durante i pasti",
+                explanation: "La posizione seduta durante i pasti è una precauzione per l’assistenza nell’alimentazione, per prevenire aspirazioni. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono garantire una posizione corretta, monitorare la deglutizione, garantire il comfort e segnalare all’infermiere sintomi come tosse o disfagia."
+            },
+            {
+                question: "Cos’è la gestione dell’incontinenza fecale nell’anziano?",
+                options: ["Un’infezione intestinale", "Un insieme di interventi per controllare le perdite fecali", "Un accumulo di liquido nel colon"],
+                correct: "Un insieme di interventi per controllare le perdite fecali",
+                explanation: "La gestione dell’incontinenza fecale nell’anziano è un insieme di interventi per controllare le perdite fecali, come igiene e dispositivi assorbenti. Non è un’infezione né un accumulo di liquido. Gli OSS devono garantire l’igiene, monitorare la cute, assistere nella gestione e segnalare segni come irritazioni o infezioni."
+            },
+            {
+                question: "Quale è una complicanza tipica dell’incontinenza fecale?",
+                options: ["Ittero", "Dermatite perianale", "Poliuria"],
+                correct: "Dermatite perianale",
+                explanation: "La dermatite perianale, dovuta al contatto prolungato con le feci, è una complicanza tipica dell’incontinenza fecale. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la cute, garantire l’igiene, monitorare le lesioni e segnalare all’infermiere sintomi come arrossamenti o ulcerazioni."
+            },
+            {
+                question: "Cos’è la gestione del sonno nell’anziano?",
+                options: ["Un accumulo di liquido nel cervello", "Un insieme di interventi per promuovere il riposo", "Un’infezione cerebrale"],
+                correct: "Un insieme di interventi per promuovere il riposo",
+                explanation: "La gestione del sonno nell’anziano è un insieme di interventi per promuovere il riposo, come routine regolari e ambiente tranquillo. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare il sonno, garantire il comfort, assistere nella gestione e segnalare segni come insonnia o agitazione notturna."
+            },
+            {
+                question: "Quale è una misura tipica per la gestione del sonno?",
+                options: ["Poliuria", "Ambiente silenzioso", "Ittero"],
+                correct: "Ambiente silenzioso",
+                explanation: "Un ambiente silenzioso è una misura tipica per la gestione del sonno, per favorire il riposo. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono controllare l’ambiente, garantire il comfort, monitorare il sonno e segnalare all’infermiere sintomi come insonnia o confusione."
+            },
+            {
+                question: "Cos’è la prevenzione delle infezioni nell’anziano?",
+                options: ["Un accumulo di liquido nei polmoni", "Un insieme di misure per ridurre il rischio infettivo", "Un’infezione muscolare"],
+                correct: "Un insieme di misure per ridurre il rischio infettivo",
+                explanation: "La prevenzione delle infezioni nell’anziano è un insieme di misure per ridurre il rischio infettivo, come igiene e vaccinazioni. Non è un’infezione né un accumulo di liquido. Gli OSS devono garantire l’igiene, monitorare i parametri vitali, assistere nella prevenzione e segnalare segni come febbre o secrezioni."
+            },
+            {
+                question: "Quale è una misura tipica per la prevenzione delle infezioni?",
+                options: ["Ittero", "Lavaggio delle mani", "Oliguria"],
+                correct: "Lavaggio delle mani",
+                explanation: "Il lavaggio delle mani è una misura tipica per la prevenzione delle infezioni, per ridurre la trasmissione di patogeni. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono eseguire l’igiene correttamente, monitorare il paziente, garantire il comfort e segnalare all’infermiere sintomi come febbre o arrossamenti."
+            },
+            {
+                question: "Cos’è l’assistenza nella comunicazione con l’anziano?",
+                options: ["Un’infezione cerebrale", "Un supporto per favorire lo scambio verbale", "Un accumulo di liquido nell’orecchio"],
+                correct: "Un supporto per favorire lo scambio verbale",
+                explanation: "L’assistenza nella comunicazione con l’anziano è un supporto per favorire lo scambio verbale, specialmente in caso di deficit uditivi o cognitivi. Non è un’infezione né un accumulo di liquido. Gli OSS devono parlare chiaramente, garantire un ambiente tranquillo, monitorare la comunicazione e segnalare segni come isolamento o confusione."
+            },
+            {
+                question: "Quale è una precauzione per l’assistenza nella comunicazione?",
+                options: ["Poliuria", "Uso di un tono di voce chiaro", "Ittero"],
+                correct: "Uso di un tono di voce chiaro",
+                explanation: "L’uso di un tono di voce chiaro è una precauzione per l’assistenza nella comunicazione, per favorire la comprensione. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono comunicare lentamente, monitorare la risposta, garantire il comfort e segnalare all’infermiere sintomi come difficoltà di comprensione o agitazione."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
